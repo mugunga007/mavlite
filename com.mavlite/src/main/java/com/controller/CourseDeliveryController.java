@@ -1,24 +1,25 @@
 package com.controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import testpac.Student;
-import testpac.StudentService;
+import testpac.CourseDeliveryService;
 
 /**
- * Servlet implementation class StudentController
+ * Servlet implementation class CourseDeliveryController
  */
-public class StudentController extends HttpServlet {
+public class CourseDeliveryController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public StudentController() {
+    public CourseDeliveryController() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -28,7 +29,7 @@ public class StudentController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.getWriter().append("Served here at: ").append(request.getContextPath());
+		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
 	/**
@@ -36,23 +37,24 @@ public class StudentController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+	//	doGet(request, response);
 		
-	//	StudentService ss = new StudentService();
-		
-		String firstname = request.getParameter("firstname");
-		String lastname = request.getParameter("lastname");
-		String email = request.getParameter("email");
-		int professor_id = Integer.parseInt(request.getParameter("professor_id"));
-			
-		StudentService ss = new StudentService();
-		
-		if(ss.insert(firstname, lastname, email,professor_id)) {
-		System.out.println(firstname);
-		request.setAttribute("email", email);
-	request.getRequestDispatcher("ChooseCourse.jsp").forward(request, response);	
+	int cid = Integer.parseInt(request.getParameter("course_id"));
+		int pid = Integer.parseInt(request.getParameter("professor_id").toString());
+		String timeSlot = request.getParameter("timeSlot");
 	
+		CourseDeliveryService ss = new CourseDeliveryService();
+		
+		//PrintWriter p = response.getWriter();
+		//p.print(pid);
+		
+	if(ss.insert(cid, pid,timeSlot)) {
+	
+		request.setAttribute("msg", "Added SuccessfullyS");
+	request.getRequestDispatcher("CourseDelivery.jsp").forward(request, response);	
 	}
+		
+	
 		
 	}
 

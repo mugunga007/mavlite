@@ -1,7 +1,6 @@
 package testpac;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,21 +8,19 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StudentService {
+public class CourseService {
 
-	Student a = new Student();
 	ConnectDb cd = new ConnectDb();
-	 
-	 public boolean insert(String firstname, String lastname, String email, int professor_id) {
+	Course co = new Course();
+	 public boolean insert(String name, String classroom,int credit) {
 		 boolean t = true;
-	        String sql = "INSERT INTO student(firstname,lastname,email,professor_id) VALUES(?,?,?,?)";
+	        String sql = "INSERT INTO course(name,classroom,credits) VALUES(?,?,?)";
 	 
 	        try (Connection conn = cd.connect();
 	                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-	            pstmt.setString(1, firstname);
-	            pstmt.setString(2, lastname);
-	            pstmt.setString(3, email);
-	            pstmt.setInt(4, professor_id);
+	            pstmt.setString(1, name);
+	            pstmt.setString(2, classroom);
+	            pstmt.setInt(3, credit);
 	            pstmt.executeUpdate();
 	            t = true;
 	        } catch (SQLException e) {
@@ -33,10 +30,10 @@ public class StudentService {
 	        return t;
 	    }
 	 
-	 public Student getStudentByEmail(String email) {
-		 Student cg = new Student();
+	 public Course getCourseById(int course_id) {
+		 Course cg = new Course();
 		 
-		 String sql = "SELECT * FROM student where email='"+email+"'";
+		 String sql = "SELECT * FROM course where course_id="+course_id;
 			
 			try(Connection conn = cd.connect();
 		             Statement stmt  = conn.createStatement();
@@ -44,29 +41,7 @@ public class StudentService {
 				
 				if(rs.next()) {
 					
-					cg = new Student(rs.getString("student_id"), rs.getString("firstname"),rs.getString("lastname"),rs.getString("email"),rs.getInt("professor_id"));
-				
-				}
-		
-
-			}catch (Exception e) {
-				// TODO: handle exception
-			}
-			return cg;
-		 
-	 }
-	 public Student getStudentById(int student_id) {
-		 Student cg = new Student();
-		 
-		 String sql = "SELECT * FROM student where student_id="+student_id;
-			
-			try(Connection conn = cd.connect();
-		             Statement stmt  = conn.createStatement();
-		             ResultSet rs    = stmt.executeQuery(sql)){
-				
-				if(rs.next()) {
-					
-					cg = new Student(rs.getString("student_id"), rs.getString("firstname"),rs.getString("lastname"),rs.getString("email"),rs.getInt("professor_id"));
+					cg = new Course(rs.getString("name"),rs.getInt("credits"),rs.getString("classroom"));
 				
 				}
 		
@@ -98,19 +73,39 @@ public class StudentService {
 	        return t;
 	    }
 	
+	 public boolean updateCourse(String name, String classroom,int credit, int course_id) {
+		 boolean t = true;
+	        String sql = "UPDATE `course` SET name='"+name +"', classroom='"+classroom+"', credits='"+credit+"' WHERE course_id="+course_id;
+	 
+	        try (Connection conn = cd.connect();
+	                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	            pstmt.setString(1, name);
+	            pstmt.setString(2, classroom);
+	            pstmt.setInt(2, credit);
+	            pstmt.setInt(2, course_id);
+	           
+	            pstmt.executeUpdate();
+	            t = true;
+	        } catch (SQLException e) {
+	            System.out.println(e.getMessage());
+	            t= false;
+	        }
+	        return t;
+	    }
 	 
 	 
-	 public List<Student> getStudentList(){
-			List<Student> list = new ArrayList<>();
-			String sql = "SELECT student_id, firstname,lastname, email,professor_id FROM student";
+	 public List<Course> getCourseList(){
+			List<Course> list = new ArrayList<>();
+			String sql = "SELECT course_id,name, classroom,credits FROM course";
 			
 			try(Connection conn = cd.connect();
 		             Statement stmt  = conn.createStatement();
 		             ResultSet rs    = stmt.executeQuery(sql)){
 				int i = 0;
 				while(rs.next()) {
-					a = new Student(rs.getString("student_id"), rs.getString("firstname"),rs.getString("lastname"),rs.getString("email"),rs.getInt("professor_id"));
-					list.add(a);
+					
+					co = new Course(rs.getInt("course_id"),rs.getString("name"),rs.getInt("credits"),rs.getString("classroom"));
+					list.add(co);
 				}
 				i++;
 				
@@ -122,5 +117,5 @@ public class StudentService {
 			return list;
 		}
 
-
+	
 }
